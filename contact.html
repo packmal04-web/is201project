@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>mallorypackard/project</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="index.html">Home</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    
+            </div>
+        </nav>
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Rider</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Neon/Tech CSS Theme */
+        :root {
+            --neon-blue: #00FFFF;
+            --neon-magenta: #FF00FF;
+            --neon-green: #00FF00;
+            --bg-dark: #111827;
+        }
+
+        body {
+            font-family: 'Press Start 2P', monospace;
+            background-color: var(--bg-dark);
+            color: var(--neon-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            user-select: none;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 16/9; /* Widescreen aspect ratio */
+            border: 4px solid var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-blue);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Scoreboard and HUD */
+        .hud {
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+            text-shadow: 0 0 5px var(--neon-magenta);
+            border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+            z-index: 5;
+            background-color: #000;
+        }
+
+        #gameCanvas {
+            flex-grow: 1;
+            display: block;
+            background-color: #000; /* Black canvas background */
+        }
+
+        /* Overlay for Start/Game Over */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            z-index: 10;
+        }
+
+        .overlay h1 {
+            font-family: 'Monoton', cursive;
+            font-size: clamp(2rem, 8vw, 4rem);
+            color: var(--neon-magenta);
+            text-shadow: 0 0 10px var(--neon-magenta), 0 0 20px var(--neon-magenta);
+            margin-bottom: 1rem;
+        }
+
+        .overlay p {
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(0.7rem, 2vw, 1rem);
+            color: var(--neon-green);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .action-button {
+            padding: 0.75rem 2rem;
+            background-color: var(--neon-blue);
+            color: var(--bg-dark);
+            font-size: clamp(0.8rem, 3vw, 1.2rem);
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            box-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+            transition: all 0.1s;
+        }
+
+        .action-button:hover {
+            box-shadow: 0 0 15px var(--neon-magenta), 0 0 30px var(--neon-magenta);
+            background-color: var(--neon-magenta);
+        }
+
+        .action-button:active {
+            transform: scale(0.98);
+        }
+        
+        /* Hidden until power-up is active */
+        .hidden {
+            display: none;
+        }
+        
+        /* Styles for power-up displays */
+        .powerup-status {
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            line-height: 1.2;
+            text-align: right;
+        }
+
+        .powerup-shield { color: var(--neon-blue); text-shadow: 0 0 5px var(--neon-blue); }
+        .powerup-boost { color: var(--neon-magenta); text-shadow: 0 0 5px var(--neon-magenta); }
+
+        /* Mobile Power Button */
+        #mobilePowerButton {
+            display: none;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--neon-green);
+            font-size: 1.5rem;
+            border: none;
+            cursor: pointer;
+            text-shadow: 0 0 5px var(--neon-green);
+            z-index: 15;
+            text-transform: uppercase;
+        }
+        
+        @media (max-width: 640px) {
+            .game-container {
+                aspect-ratio: 9/16;
+                max-width: 95vw;
+                height: 90vh;
+            }
+            #mobilePowerButton {
+                display: block;
+            }
+            .overlay {
+                padding-bottom: 70px; /* Space for the mobile button */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <!-- HUD / Scoreboard -->
+        <div class="hud">
+            <div>Distance: <span id="scoreDisplay">0</span>m</div>
+            
+            <!-- Power-up Status Display -->
+            <div id="powerUpStatus" class="powerup-status">
+                <div id="shieldTimerDisplay" class="powerup-shield hidden">SHIELD: <span class="time-value"></span>s</div>
+                <div id="boostTimerDisplay" class="powerup-boost hidden">BOOST: <span class="time-value"></span>s</div>
+            </div>
+
+            <div>High Score: <span id="highScoreDisplay">0</span>m</div>
+        </div>
+
+        <!-- Main Game Area -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Start/Game Over Overlay -->
+        <div id="gameOverlay" class="overlay">
+            <h1 id="overlayTitle">NEON RIDER</h1>
+            <p id="overlayMessage">Press **SPACEBAR** or tap the screen to jump, collect power-ups, and hit **JUMPER RAMPS** for huge air! Watch out for **NEON STORMS**!</p>
+            <button id="startButton" class="action-button">
+                START!
+            </button>
+        </div>
+
+        <!-- Mobile Power Button (hidden on desktop) -->
+        <button id="mobilePowerButton">
+            JUMP / POWER
+        </button>
+    </div>
+
+    <script>
+        // === Global Variables & Setup ===
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const highScoreDisplay = document.getElementById('highScoreDisplay');
+        const shieldTimerDisplay = document.getElementById('shieldTimerDisplay');
+        const boostTimerDisplay = document.getElementById('boostTimerDisplay');
+        const gameOverlay = document.getElementById('gameOverlay');
+        const startButton = document.getElementById('startButton');
+        const mobilePowerButton = document.getElementById('mobilePowerButton');
+
+        let gameState = 'ready'; // 'ready', 'playing', 'over'
+        let score = 0;
+        let highScore = localStorage.getItem('neonJumperHighScore') || 0;
+        let animationFrameId;
+
+        // Game Constants
+        const GRAVITY = 0.9;
+        const JUMP_FORCE = -18;
+        const RAMP_JUMP_FORCE = -35; // New, higher jump force for ramps
+        let WORLD_SPEED_BASE = 4; // Base speed, affected by slope and difficulty
+        let WORLD_SPEED_MODIFIER = 1.0; // Modifier from power-ups
+        const MAX_SPEED = 12; 
+        const SPEED_INCREMENT = 0.003; 
+        
+        // Terrain Constants
+        const TERRAIN_SEGMENT_LENGTH = 150; 
+        const TERRAIN_MAX_CHANGE = 0.15;    
+        const STARTING_FLAT_LENGTH = 1000; // Length of guaranteed flat starting terrain (in world units)
+        let terrain = []; // Array of {x, y} points defining the ground
+        let lastTerrainX = 0;
+        let lastTerrainY = 0;
+
+        // Obstacle Constants
+        let MIN_DISTANCE_BETWEEN_OBSTACLES = 300;
+        let MAX_DISTANCE_BETWEEN_OBSTACLES = 600;
+
+        // Difficulty Scaling Constants
+        const MIN_GAP_LIMIT = 150; 
+        const SPIKE_PROBABILITY_MAX = 0.5; 
+        const DIFFICULTY_SCORE_THRESHOLD = 500; 
+
+        // Power-up Constants
+        const SHIELD_DURATION = 5000; // 5 seconds
+        const BOOST_DURATION = 3000; // 3 seconds
+        const BOOST_MULTIPLIER = 2.0;
+        const MIN_DISTANCE_BETWEEN_POWERUPS = 1500;
+        const POWERUP_SPAWN_CHANCE = 0.005; // 0.5% chance per frame to spawn a power-up if far enough
+        
+        let isInvincible = false;
+        let shieldTimer = 0;
+        
+        let isBoosting = false;
+        let boostTimer = 0;
+        
+        let powerUps = [];
+        let lastPowerUpX = 0; 
+        
+        // === RAMP AND STORM VARIABLES ===
+        const MIN_DISTANCE_BETWEEN_RAMPS = 3000;
+        let ramps = [];
+        let nextRampDistance = 3000;
+        
+        // Storm variables for Disruptive Weather
+        const STORM_DURATION = 3000; // 3 seconds of storm
+        const FIRST_STORM_DISTANCE = 200; // First storm starts at 200m
+        const STORM_INTERVAL = 300;       // Subsequent storms every 300m (500m, 800m, etc.)
+        let nextStormDistance = FIRST_STORM_DISTANCE;
+        
+        let stormState = {
+            isStorming: false,
+            timer: 0,
+            flashTimer: 0 // Used to control the visual flash intensity
+        };
+        // ================================
+        
+        // Colors
+        const defaultPlayerColor = getComputedStyle(document.documentElement).getPropertyValue('--neon-green').trim();
+        const invinciblePlayerColor = getComputedStyle(document.documentElement).getPropertyValue('--neon-blue').trim();
+
+        // Game Objects
+        const player = {
+            x: 0,
+            y: 0,
+            width: 55, 
+            height: 25,
+            velocityY: 0,
+            isJumping: false,
+            groundY: 0, 
+            rotation: 0,
+            color: defaultPlayerColor
+        };
+
+        let obstacles = [];
+        let nextObstacleDistance = 0;
+
+
+        // === Utility Functions ===
+
+        function updateHighScore(newScore) {
+            if (newScore > highScore) {
+                highScore = newScore;
+                localStorage.setItem('neonJumperHighScore', highScore);
+                highScoreDisplay.textContent = Math.floor(highScore);
+            }
+        }
+        
+        /**
+         * Finds the ground Y position and slope at a given X coordinate.
+         */
+        function getGroundData(px) {
+            // Check for insufficient terrain data gracefully
+            if (terrain.length < 2) {
+                 // Fallback to a safe, static ground level (center screen)
+                 return { y: canvas.height * 0.55, slope: 0 }; 
+            }
+
+            let segmentIndex = terrain.findIndex(p => p.x > px) - 1;
+            segmentIndex = Math.max(0, segmentIndex); 
+
+            const p1 = terrain[segmentIndex];
+            const p2 = terrain[segmentIndex + 1] || terrain[terrain.length - 1];
+            
+            const rangeX = p2.x - p1.x;
+            const rangeY = p2.y - p1.y;
+            
+            // Handle edge case where rangeX is zero (shouldn't happen with TERRAIN_SEGMENT_LENGTH > 0)
+            if (rangeX === 0) return { y: p1.y, slope: 0 };
+
+            const slope = rangeY / rangeX;
+            const alpha = (px - p1.x) / rangeX;
+            const y = p1.y + rangeY * alpha;
+
+            return { y, slope };
+        }
+        
+        /**
+         * Checks for Axis-Aligned Bounding Box (AABB) overlap between two objects.
+         * Assumes objects have x, y, width, and height properties.
+         * @param {object} boxA - The first bounding box.
+         * @param {object} boxB - The second bounding box.
+         */
+        function checkOverlapAABB(boxA, boxB) {
+            return (
+                boxA.x < boxB.x + boxB.width &&
+                boxA.x + boxA.width > boxB.x &&
+                boxA.y < boxB.y + boxB.height &&
+                boxA.y + boxA.height > boxB.y
+            );
+        }
+
+        // === Terrain Generation ===
+
+        /**
+         * Generates a new terrain segment (a single point) extending the course.
+         */
+        function generateTerrainSegment() {
+            const lastY = terrain.length > 0 ? terrain[terrain.length - 1].y : canvas.height * 0.55; 
+            const lastX = terrain.length > 0 ? terrain[terrain.length - 1].x : 0;
+            
+            const direction = Math.floor(Math.random() * 3);
+            
+            let newY = lastY;
+            let newX = lastX + TERRAIN_SEGMENT_LENGTH;
+            
+            const yChange = (Math.random() * TERRAIN_MAX_CHANGE + 0.05) * TERRAIN_SEGMENT_LENGTH;
+
+            if (direction === 1) { // Go Up
+                newY = Math.max(canvas.height * 0.3, lastY - yChange); 
+            } else if (direction === 2) { // Go Down
+                newY = Math.min(canvas.height * 0.8, lastY + yChange); 
+            }
+
+            terrain.push({ x: newX, y: newY });
+            lastTerrainX = newX;
+            lastTerrainY = newY;
+        }
+
+        /**
+         * Ensures the terrain extends far enough beyond the right edge of the canvas.
+         */
+        function extendTerrain() {
+            // Ensure terrain extends enough to cover the screen plus a buffer
+            while (lastTerrainX < player.x + canvas.width * 1.5) {
+                 generateTerrainSegment();
+            }
+        }
+
+        // === Drawing Functions ===
+
+        function drawGround() {
+            ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--neon-blue').trim();
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            
+            let startPointIndex = terrain.findIndex(p => p.x > player.x - canvas.width * 0.2);
+            startPointIndex = Math.max(0, startPointIndex - 1); 
+
+            if (terrain.length > 0) {
+                // Adjust position based on player's current offset (camera follow)
+                const offsetX = player.x - (canvas.width / 8); 
+
+                ctx.moveTo(terrain[startPointIndex].x - offsetX, terrain[startPointIndex].y);
+                
+                for (let i = startPointIndex + 1; i < terrain.length; i++) {
+                    ctx.lineTo(terrain[i].x - offsetX, terrain[i].y);
+                }
+                ctx.stroke();
+
+                // Fill the ground area below the line for better visibility
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.1)';
+                ctx.lineTo(canvas.width, canvas.height); // Bottom right
+                ctx.lineTo(0, canvas.height);           // Bottom left
+                ctx.fill();
+            }
+        }
+
+        function drawPlayer() {
+            const p = player;
+            const screenX = canvas.width / 8; // Player's screen X position (fixed)
+            
+            ctx.save();
+            
+            // Translate and Rotate based on ground slope or jump rotation
+            const centerX = screenX + p.width / 2;
+            const centerY = p.y + p.height / 2;
+            
+            ctx.translate(centerX, centerY);
+            ctx.rotate(p.rotation);
+            ctx.translate(-centerX, -centerY);
+
+            // --- Sports Car Shape ---
+            ctx.strokeStyle = p.color; // Use dynamic color
+            ctx.lineWidth = 3;
+
+            // Apply glow if invincible or boosting
+            if (isInvincible) {
+                ctx.shadowColor = p.color;
+                ctx.shadowBlur = 15;
+            } else if (isBoosting) {
+                 // Small magenta glow when boosting
+                ctx.shadowColor = getComputedStyle(document.documentElement).getPropertyValue('--neon-magenta').trim();
+                ctx.shadowBlur = 8;
+            }
+
+            ctx.beginPath();
+            
+            // Main body (Sleek shape)
+            ctx.moveTo(screenX, p.y + p.height * 0.5); 
+            ctx.lineTo(screenX + p.width * 0.1, p.y + p.height * 0.2); 
+            ctx.lineTo(screenX + p.width * 0.7, p.y + p.height * 0.1); 
+            ctx.lineTo(screenX + p.width, p.y + p.height * 0.5); 
+            ctx.lineTo(screenX + p.width * 0.9, p.y + p.height); 
+            ctx.lineTo(screenX + p.width * 0.1, p.y + p.height); 
+            ctx.closePath();
+            
+            ctx.stroke();
+            ctx.fillStyle = p.color === defaultPlayerColor ? 'rgba(0, 255, 0, 0.2)' : 'rgba(0, 255, 255, 0.3)';
+            ctx.fill();
+
+            // Cockpit/Window (Blue highlight)
+            ctx.beginPath();
+            ctx.moveTo(screenX + p.width * 0.15, p.y + p.height * 0.25);
+            ctx.lineTo(screenX + p.width * 0.65, p.y + p.height * 0.15);
+            ctx.lineTo(screenX + p.width * 0.65, p.y + p.height * 0.5);
+            ctx.lineTo(screenX + p.width * 0.15, p.y + p.height * 0.5);
+            ctx.closePath();
+            ctx.fillStyle = 'var(--neon-blue)';
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'var(--neon-blue)';
+            ctx.stroke();
+            
+            // Wheels (Circles)
+            const wheelY = p.y + p.height;
+            const wheelRadius = p.height / 3.5;
+            ctx.fillStyle = 'var(--bg-dark)';
+            ctx.strokeStyle = p.color;
+            ctx.lineWidth = 2;
+
+            // Front wheel
+            ctx.beginPath();
+            ctx.arc(screenX + p.width * 0.75, wheelY, wheelRadius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fill();
+
+            // Back wheel
+            ctx.beginPath();
+            ctx.arc(screenX + p.width * 0.25, wheelY, wheelRadius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fill();
+            
+            ctx.restore();
+        }
+
+        function drawObstacle(obs) {
+            // Adjust obstacle position based on player's world position
+            const screenX = obs.x - (player.x - canvas.width / 8);
+            
+            ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--neon-magenta').trim();
+            ctx.lineWidth = 3;
+            ctx.shadowColor = getComputedStyle(document.documentElement).getPropertyValue('--neon-magenta').trim();
+            ctx.shadowBlur = 10;
+            ctx.fillStyle = 'rgba(255, 0, 255, 0.2)';
+
+            if (obs.type === 'block') {
+                // Draw standard block obstacle
+                ctx.strokeRect(screenX, obs.y, obs.width, obs.height);
+                ctx.fillRect(screenX, obs.y, obs.width, obs.height);
+            } else if (obs.type === 'spike') {
+                // Draw a triangular spike obstacle
+                ctx.beginPath();
+                ctx.moveTo(screenX, obs.y + obs.height); // Base left
+                ctx.lineTo(screenX + obs.width / 2, obs.y); // Spike tip
+                ctx.lineTo(screenX + obs.width, obs.y + obs.height); // Base right
+                ctx.closePath();
+
+                ctx.stroke();
+                ctx.fillStyle = 'rgba(255, 0, 255, 0.5)'; // Brighter fill for spike
+                ctx.fill();
+            }
+            ctx.shadowBlur = 0; // Reset shadow
+        }
+        
+        function drawPowerUp(pu) {
+            const screenX = pu.x - (player.x - canvas.width / 8);
+            const puSize = pu.size;
+            
+            ctx.save();
+            // Translate to the center of the power-up for rotation/drawing
+            ctx.translate(screenX + puSize / 2, pu.y + puSize / 2);
+            // Rotate the power-up slightly based on time
+            ctx.rotate(Date.now() / 500 % (Math.PI * 2)); 
+            
+            ctx.lineWidth = 3;
+            
+            if (pu.type === 'shield') {
+                // Neon Energy Cell (Green) - Capsule/Battery
+                ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--neon-green').trim();
+                ctx.shadowColor = ctx.strokeStyle;
+                ctx.shadowBlur = 15;
+                ctx.fillStyle = 'rgba(0, 255, 0, 0.4)';
+
+                ctx.beginPath();
+                const radius = puSize / 3;
+                const halfSize = puSize / 2;
+                
+                ctx.moveTo(-halfSize + radius, -halfSize);
+                ctx.lineTo(halfSize - radius, -halfSize);
+                ctx.arc(halfSize - radius, 0, radius, -Math.PI/2, Math.PI/2);
+                ctx.lineTo(-halfSize + radius, halfSize);
+                ctx.arc(-halfSize + radius, 0, radius, Math.PI/2, -Math.PI/2);
+                ctx.closePath();
+                
+                ctx.stroke();
+                ctx.fill();
+
+            } else if (pu.type === 'boost') {
+                // Speed Boost (Magenta) - Upward Arrow
+                ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--neon-magenta').trim();
+                ctx.shadowColor = ctx.strokeStyle;
+                ctx.shadowBlur = 15;
+                ctx.fillStyle = 'rgba(255, 0, 255, 0.4)';
+                
+                ctx.beginPath();
+                // Draw a simple upward pointing arrow shape
+                ctx.moveTo(0, -puSize / 2); // Top point
+                ctx.lineTo(puSize / 3, puSize / 4);
+                ctx.lineTo(puSize / 6, puSize / 4);
+                ctx.lineTo(puSize / 6, puSize / 2);
+                ctx.lineTo(-puSize / 6, puSize / 2);
+                ctx.lineTo(-puSize / 6, puSize / 4);
+                ctx.lineTo(-puSize / 3, puSize / 4);
+                ctx.closePath();
+                
+                ctx.stroke();
+                ctx.fill();
+            }
+            
+            ctx.restore();
+            ctx.shadowBlur = 0; // Reset shadow
+        }
+        
+        function drawRamp(ramp) {
+            const screenX = ramp.x - (player.x - canvas.width / 8);
+            
+            // Ramp Color: Yellow/Gold for visual distinction
+            ctx.strokeStyle = 'rgba(255, 255, 0, 1.0)';
+            ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
+            ctx.lineWidth = 5;
+            ctx.shadowColor = ctx.strokeStyle;
+            ctx.shadowBlur = 15;
+            
+            // Draw the ramp as a triangle or trapezoid on the ground
+            ctx.beginPath();
+            ctx.moveTo(screenX, ramp.y + ramp.height); // Bottom left (on ground)
+            ctx.lineTo(screenX + ramp.width, ramp.y + ramp.height); // Bottom right (on ground)
+            ctx.lineTo(screenX + ramp.width * 0.75, ramp.y); // Top right (end of ramp)
+            ctx.lineTo(screenX + ramp.width * 0.25, ramp.y); // Top left (start of ramp)
+            ctx.closePath();
+            
+            ctx.stroke();
+            ctx.fill();
+            ctx.shadowBlur = 0; // Reset shadow
+        }
+        
+        function drawStorm() {
+            if (!stormState.isStorming) return;
+            
+            // 1. Draw a flash overlay (fades quickly)
+            const flashAlpha = stormState.flashTimer / 500; // 500ms fade out
+            if (flashAlpha > 0.01) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${flashAlpha})`;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            // 2. Draw persistent visual noise/lines (fades with storm timer)
+            const stormAlpha = stormState.timer / STORM_DURATION;
+            ctx.strokeStyle = `rgba(0, 255, 255, ${stormAlpha * 0.5})`;
+            ctx.lineWidth = 1;
+            
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                // Draw diagonal neon lines across the screen
+                const startX = Math.random() * canvas.width;
+                const startY = Math.random() * canvas.height;
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(startX + 500, startY + 500);
+                ctx.stroke();
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGround();
+
+            ramps.forEach(drawRamp); // Draw ramps first
+            obstacles.forEach(drawObstacle);
+            powerUps.forEach(drawPowerUp); 
+            drawPlayer();
+            
+            drawStorm(); // Draw storm effects last to overlay the game
+        }
+
+        // === Game Logic ===
+
+        function resetGame() {
+            score = 0;
+            WORLD_SPEED_BASE = 4; 
+            WORLD_SPEED_MODIFIER = 1.0;
+            MIN_DISTANCE_BETWEEN_OBSTACLES = 300;
+            
+            // Reset Power-up States
+            isInvincible = false;
+            shieldTimer = 0;
+            isBoosting = false;
+            boostTimer = 0;
+            player.color = defaultPlayerColor;
+            shieldTimerDisplay.classList.add('hidden');
+            boostTimerDisplay.classList.add('hidden');
+            
+            // Reset Ramps and Storm
+            ramps = [];
+            nextRampDistance = 3000;
+            nextStormDistance = FIRST_STORM_DISTANCE; // Reset storm interval trigger
+            stormState = { isStorming: false, timer: 0, flashTimer: 0 };
+
+
+            // Initialize Terrain
+            terrain = [];
+            lastTerrainX = 0;
+            
+            // Initial ground level (center screen)
+            const initialY = canvas.height * 0.55; 
+            
+            // 1. Start point
+            terrain.push({ x: 0, y: initialY });
+            
+            // 2. Create a long, guaranteed flat section
+            let flatX = 0;
+            while (flatX < STARTING_FLAT_LENGTH) {
+                flatX += TERRAIN_SEGMENT_LENGTH;
+                terrain.push({ x: flatX, y: initialY });
+            }
+            
+            lastTerrainX = flatX;
+            lastTerrainY = initialY;
+            
+            // CRITICAL FIX: Ensure terrain is fully extended before positioning player
+            extendTerrain(); 
+
+            // Position player on the ground
+            player.x = canvas.width / 8; 
+            // Now getGroundData should have sufficient points
+            player.groundY = getGroundData(player.x + player.width / 2).y - player.height; 
+            player.y = player.groundY;
+            player.velocityY = 0;
+            player.isJumping = false;
+            player.rotation = 0;
+            
+            obstacles = [];
+            powerUps = []; // Clear power-ups
+            nextObstacleDistance = STARTING_FLAT_LENGTH; // Don't spawn obstacles until the flat section ends
+            lastPowerUpX = 0; // Reset last power-up spawn location
+
+            scoreDisplay.textContent = 0;
+            updateHighScore(highScore); 
+            
+            document.getElementById('startButton').textContent = "START!";
+            document.getElementById('overlayTitle').textContent = "NEON RIDER";
+            document.getElementById('overlayMessage').innerHTML = 'Press **SPACEBAR** or tap the screen to jump, collect power-ups, and hit **JUMPER RAMPS** for huge air! Watch out for **NEON STORMS**!';
+        }
+
+        /**
+         * Checks for collision between the car (AABB) and obstacles.
+         */
+        function checkCollision() {
+            const p = player;
+            // Car collision box: slightly smaller than drawing for forgiveness
+            const pX = p.x + 5; 
+            const pY = p.y + 5;
+            const pW = p.width - 10;
+            const pH = p.height - 10;
+
+            // Check if player goes below the lowest possible ground point (crash into the abyss)
+            if (pY > canvas.height) {
+                return true;
+            }
+            
+            // If invincible, no obstacle collision can occur
+            if (isInvincible) {
+                return false;
+            }
+
+            for (const obs of obstacles) {
+                // Obstacle collision box (AABB for both types)
+                const obsX = obs.x;
+                const obsY = obs.y;
+                const obsW = obs.width;
+                const obsH = obs.height;
+                
+                // Simplified AABB collision check
+                if (pX < obsX + obsW &&
+                    pX + pW > obsX &&
+                    pY < obsY + obsH &&
+                    pY + pH > obsY) {
+                    // Collision detected
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        /**
+         * Checks if the player hits a Jumper Ramp.
+         */
+        function checkRampInteraction() {
+            const p = player;
+            // Only check if player is on the ground
+            if (p.isJumping) return;
+            
+            // Use a slightly larger player box for easier ramp hitting
+            const pX = p.x; 
+            const pY = p.y;
+            const pW = p.width;
+            const pH = p.height;
+            
+            for (let i = ramps.length - 1; i >= 0; i--) {
+                const ramp = ramps[i];
+                
+                if (ramp.isUsed) continue;
+
+                const rX = ramp.x;
+                const rY = ramp.y;
+                const rW = ramp.width;
+                const rH = ramp.height + 10; // Add buffer below
+
+                // AABB Check
+                if (pX < rX + rW && pX + pW > rX && pY + pH > rY && pY < rY + rH) {
+                    // Launch the car!
+                    p.velocityY = RAMP_JUMP_FORCE;
+                    p.isJumping = true;
+                    ramp.isUsed = true; // Mark as used so it doesn't launch twice
+                    return;
+                }
+            }
+        }
+        
+        /**
+         * Applies the power-up effect to the player.
+         */
+        function applyPowerUp(type) {
+            if (type === 'shield') {
+                // Shield takes precedence
+                isInvincible = true;
+                shieldTimer = SHIELD_DURATION;
+                player.color = invinciblePlayerColor; // Change car color to blue
+                shieldTimerDisplay.classList.remove('hidden');
+                
+                // Cancel boost if shield is picked up
+                if (isBoosting) {
+                    isBoosting = false;
+                    boostTimer = 0;
+                    WORLD_SPEED_MODIFIER = 1.0;
+                    boostTimerDisplay.classList.add('hidden');
+                }
+            } else if (type === 'boost') {
+                if (!isInvincible) { // Cannot boost while shielded
+                    isBoosting = true;
+                    boostTimer = BOOST_DURATION;
+                    WORLD_SPEED_MODIFIER = BOOST_MULTIPLIER;
+                    boostTimerDisplay.classList.remove('hidden');
+                }
+            }
+        }
+
+        /**
+         * Checks if the player has collected any power-ups.
+         */
+        function checkPowerUpCollection() {
+             for (let i = powerUps.length - 1; i >= 0; i--) {
+                const pu = powerUps[i];
+                const p = player;
+                
+                // Player AABB slightly adjusted for better pickup feel
+                const pX = p.x + 5; const pY = p.y + 5; const pW = p.width - 10; const pH = p.height - 10;
+                const puX = pu.x; const puY = pu.y; const puW = pu.size; const puH = pu.size;
+                
+                if (pX < puX + puW && pX + pW > puX && pY < puY + puH && pY + pH > puY) {
+                    applyPowerUp(pu.type);
+                    powerUps.splice(i, 1); // Remove collected power-up
+                }
+            }
+        }
+
+        function generateObstacle() {
+            // Calculate difficulty ratio (0 to 1)
+            const difficultyRatio = Math.min(1, score / DIFFICULTY_SCORE_THRESHOLD);
+
+            // Determine obstacle type based on difficulty
+            const spikeChance = difficultyRatio * SPIKE_PROBABILITY_MAX;
+            const obstacleType = Math.random() < spikeChance ? 'spike' : 'block';
+
+            // Use the pre-calculated spawn point for the X position
+            const spawnX = nextObstacleDistance;
+            
+            // Only generate obstacles where the ground is flat or slightly sloped 
+            const groundData = getGroundData(spawnX); // Use spawnX to find ground level
+            const slope = Math.abs(groundData.slope);
+
+            if (slope < TERRAIN_MAX_CHANGE / 2 || obstacles.length === 0) {
+                let height, width;
+
+                if (obstacleType === 'spike') {
+                    // Spike: narrow and short, placed directly on the ground
+                    height = 20 + Math.random() * 10;
+                    width = 15;
+                } else {
+                    // Block: variable height/width
+                    const minH = 30;
+                    const maxH = 80;
+                    const minW = 20;
+                    const maxW = 50;
+                    height = minH + Math.random() * (maxH - minW);
+                    width = minW + Math.random() * (maxW - minW);
+                }
+
+                // Obstacles placed exactly on the dynamic ground level at spawnX
+                const obsY = groundData.y - height;
+
+                obstacles.push({
+                    x: spawnX, // Corrected to use the calculated distance
+                    y: obsY,
+                    width: width,
+                    height: height,
+                    type: obstacleType
+                });
+
+                // Difficulty scaling: Tighter gaps at higher scores
+                const effectiveMinGap = MIN_DISTANCE_BETWEEN_OBSTACLES - (MIN_DISTANCE_BETWEEN_OBSTACLES - MIN_GAP_LIMIT) * difficultyRatio;
+
+                // Set distance for next obstacle generation (relative to current X)
+                nextObstacleDistance = spawnX + effectiveMinGap + 
+                                       Math.random() * (MAX_DISTANCE_BETWEEN_OBSTACLES - effectiveMinGap);
+            } else {
+                 // If the terrain is too steep, skip obstacle generation for this cycle but move the next spawn distance
+                 nextObstacleDistance = spawnX + MIN_DISTANCE_BETWEEN_OBSTACLES;
+            }
+        }
+
+        /**
+         * Generates a power-up at the given target X location, avoiding obstacles/ramps.
+         */
+        function generatePowerUp(targetX) {
+            const powerUpSize = 25;
+            
+            // Power-up types: 50% chance for shield, 50% for boost
+            const availableTypes = ['shield', 'boost'];
+            const randomType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
+            
+            // Add a bit of randomness to the target X to spread them out visually
+            const spawnX = targetX + Math.random() * 200; 
+            
+            // Only generate power-ups on relatively flat ground
+            const groundData = getGroundData(spawnX);
+            const slope = Math.abs(groundData.slope);
+
+            if (slope < TERRAIN_MAX_CHANGE / 3) {
+                // Spawn the power-up slightly above the ground level
+                const groundY = groundData.y;
+                const puY = groundY - powerUpSize - 10;
+
+                // Define the bounding box for the potential power-up
+                const potentialPowerUpBox = {
+                    x: spawnX,
+                    y: puY,
+                    width: powerUpSize,
+                    height: powerUpSize
+                };
+                
+                // --- COLLISION AVOIDANCE CHECK ---
+                let overlaps = false;
+                
+                // 1. Check overlap with existing obstacles (both block and spike)
+                for (const obs of obstacles) {
+                    const obsBox = {
+                        x: obs.x,
+                        y: obs.y,
+                        width: obs.width,
+                        height: obs.height
+                    };
+                    if (checkOverlapAABB(potentialPowerUpBox, obsBox)) {
+                        overlaps = true;
+                        break;
+                    }
+                }
+                
+                // 2. Check overlap with ramps
+                if (!overlaps) {
+                    for (const ramp of ramps) {
+                         // Use a slight height buffer for the ramp's interaction area
+                         const rampBox = {
+                            x: ramp.x,
+                            y: ramp.y,
+                            width: ramp.width,
+                            height: ramp.height + 10 
+                        };
+                        if (checkOverlapAABB(potentialPowerUpBox, rampBox)) {
+                            overlaps = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!overlaps) {
+                    powerUps.push({
+                        x: spawnX,
+                        y: puY,
+                        size: powerUpSize,
+                        type: randomType
+                    });
+                    
+                    // Update the last successful spawn location
+                    lastPowerUpX = spawnX;
+                }
+            }
+        }
+        
+        /**
+         * Generates a Jumper Ramp.
+         */
+        function generateRamp() {
+            const rampWidth = 120;
+            const rampHeight = 40;
+            const spawnX = nextRampDistance;
+            
+            const groundData = getGroundData(spawnX + rampWidth / 2);
+            const slope = Math.abs(groundData.slope);
+            
+            if (slope < TERRAIN_MAX_CHANGE / 3) { // Only spawn on relatively flat ground
+                 const groundY = groundData.y - rampHeight;
+                 
+                 ramps.push({
+                    x: spawnX,
+                    y: groundY,
+                    width: rampWidth,
+                    height: rampHeight,
+                    isUsed: false // Can only be used once
+                 });
+                 
+                 nextRampDistance = spawnX + MIN_DISTANCE_BETWEEN_RAMPS + Math.random() * 1000;
+            } else {
+                // If ground is too steep, push the next spawn distance slightly
+                nextRampDistance = spawnX + 500;
+            }
+        }
+        
+        /**
+         * Handles the timing and flashing of the Neon Storm based on distance intervals.
+         */
+        function updateStorm(timeElapsed) {
+            // Check if we should start a storm based on score exceeding the next target distance
+            if (!stormState.isStorming && score >= nextStormDistance) {
+                 stormState.isStorming = true;
+                 stormState.timer = STORM_DURATION;
+                 stormState.flashTimer = 500; // Initial flash duration
+                 
+                 // Calculate the next storm trigger distance
+                 if (nextStormDistance === FIRST_STORM_DISTANCE) {
+                    nextStormDistance = FIRST_STORM_DISTANCE + STORM_INTERVAL;
+                 } else {
+                    nextStormDistance += STORM_INTERVAL;
+                 }
+            }
+
+            if (stormState.isStorming) {
+                stormState.timer -= timeElapsed;
+                
+                // Handle continuous flashing effect during the storm
+                if (stormState.timer > 0) {
+                     // Decay the flash timer
+                     stormState.flashTimer = Math.max(0, stormState.flashTimer - timeElapsed * 2);
+                     // Occasionally trigger a new flash during the storm
+                     if (Math.random() < 0.05) {
+                          stormState.flashTimer = 500; // Reset flash for a new visual pulse
+                     }
+                } else {
+                    // Storm ends
+                    stormState.isStorming = false;
+                    stormState.timer = 0;
+                    stormState.flashTimer = 0;
+                }
+            }
+        }
+
+
+        function update() {
+            const timeElapsed = (1000 / 60); // Approx delta for 60fps
+            
+            // 1. Calculate Current Speed (Base + Modifier)
+            WORLD_SPEED_BASE = Math.min(MAX_SPEED, Math.max(4, WORLD_SPEED_BASE + SPEED_INCREMENT));
+            const currentSpeed = WORLD_SPEED_BASE * WORLD_SPEED_MODIFIER;
+
+
+            // 2. Update Score and Speed (Difficulty Scaling)
+            score += currentSpeed / 60; 
+            scoreDisplay.textContent = Math.floor(score);
+            
+            // 3. Player Physics & Ground Interaction
+            const groundData = getGroundData(player.x + player.width / 2); 
+            const groundLevelY = groundData.y;
+            player.groundY = groundLevelY - player.height;
+
+            // Apply gravity/velocityY
+            player.velocityY += GRAVITY;
+            player.y += player.velocityY;
+
+            // Check if player lands on the ground (touching the ground level)
+            if (player.y >= player.groundY) {
+                player.y = player.groundY;
+                player.velocityY = 0;
+                player.isJumping = false;
+                
+                player.rotation = groundData.slope; 
+                WORLD_SPEED_BASE += (groundData.slope * 0.1); 
+            } else {
+                 player.rotation = Math.min(Math.PI / 8, Math.max(-Math.PI / 8, player.velocityY * 0.03));
+            }
+
+
+            // 4. World Advancement
+            player.x += currentSpeed; 
+            
+            // 5. Check for Ramp Interaction (must be done BEFORE power-up/collision checks)
+            if (!player.isJumping) {
+                checkRampInteraction();
+            }
+
+            // 6. Power-up Timer Logic
+            // SHIELD Timer
+            if (isInvincible) {
+                shieldTimer -= timeElapsed; 
+                const secondsLeft = Math.ceil(shieldTimer / 1000);
+                shieldTimerDisplay.querySelector('.time-value').textContent = Math.max(0, secondsLeft); 
+                if (shieldTimer <= 0) {
+                    isInvincible = false;
+                    shieldTimerDisplay.classList.add('hidden');
+                    player.color = defaultPlayerColor; 
+                }
+            }
+
+            // BOOST Timer
+            if (isBoosting) {
+                boostTimer -= timeElapsed;
+                const secondsLeft = Math.ceil(boostTimer / 1000);
+                boostTimerDisplay.querySelector('.time-value').textContent = Math.max(0, secondsLeft);
+
+                if (boostTimer <= 0) {
+                    isBoosting = false;
+                    boostTimerDisplay.classList.add('hidden');
+                    WORLD_SPEED_MODIFIER = 1.0; 
+                }
+            }
+            
+            // Visual override: If shield is active, make sure car is blue.
+            if (isInvincible) {
+                 player.color = invinciblePlayerColor;
+            } else if (!isBoosting) {
+                 player.color = defaultPlayerColor;
+            }
+            
+            // 7. Storm Logic
+            updateStorm(timeElapsed);
+
+
+            // 8. Terrain, Obstacle, and Power-up Generation/Cleanup
+            extendTerrain(); 
+
+            // Obstacle Generation
+            if (player.x + canvas.width > nextObstacleDistance) {
+                 generateObstacle();
+            }
+            
+            // Ramp Generation
+            if (player.x + canvas.width > nextRampDistance) {
+                 generateRamp();
+            }
+
+            // Power-up Generation (Probability)
+            if (player.x - lastPowerUpX > MIN_DISTANCE_BETWEEN_POWERUPS && Math.random() < POWERUP_SPAWN_CHANCE) {
+                // Determine a target spawn X slightly ahead of the player
+                const targetX = player.x + canvas.width * 0.75; 
+                generatePowerUp(targetX);
+            }
+
+            // Cleanup: remove off-screen obstacles, ramps, and power-ups
+            obstacles = obstacles.filter(obs => obs.x > player.x - 200);
+            ramps = ramps.filter(ramp => ramp.x + ramp.width > player.x - 200);
+            powerUps = powerUps.filter(pu => pu.x + pu.size > player.x - 200);
+
+
+            // 9. Collision and Power-up Checks
+            checkPowerUpCollection();
+
+            if (checkCollision()) {
+                endGame();
+                return; 
+            }
+
+            // Loop the animation
+            animationFrameId = requestAnimationFrame(update);
+            draw();
+        }
+
+        function endGame() {
+            cancelAnimationFrame(animationFrameId);
+            gameState = 'over';
+            updateHighScore(score);
+            gameOverlay.style.display = 'flex';
+            document.getElementById('overlayTitle').textContent = "CRASHED OUT!";
+            document.getElementById('overlayMessage').innerHTML = `You drove **${Math.floor(score)}m**! <br> High Score: ${Math.floor(highScore)}m`;
+            document.getElementById('startButton').textContent = "RETRY";
+        }
+
+        // === Event Handlers ===
+        
+        function playerJump() {
+            if (gameState === 'playing' && !player.isJumping) {
+                player.velocityY = JUMP_FORCE;
+                player.isJumping = true;
+            }
+        }
+
+        function startGame() {
+            if (gameState !== 'playing') {
+                resetGame();
+                gameState = 'playing';
+                gameOverlay.style.display = 'none';
+                update();
+            }
+        }
+
+        startButton.addEventListener('click', startGame);
+        mobilePowerButton.addEventListener('click', playerJump);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault(); 
+                if (gameState === 'ready' || gameState === 'over') {
+                    startGame();
+                } else {
+                    playerJump();
+                }
+            }
+        });
+        
+        // Handle canvas click/tap for jump
+        canvas.addEventListener('click', (e) => {
+            if (gameState === 'playing') {
+                playerJump();
+            }
+        });
+
+        // === Initialization ===
+
+        function init() {
+            // Set canvas size to fill container
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+
+            // Load high score
+            updateHighScore(highScore);
+            
+            // Center the initial state
+            resetGame(); 
+
+            // Show initial overlay
+            gameOverlay.style.display = 'flex'; 
+        }
+        
+        // Ensure canvas resize updates game size
+        window.addEventListener('resize', () => {
+            if (gameState !== 'playing') {
+                 init();
+            } else {
+                canvas.width = canvas.clientWidth;
+                canvas.height = canvas.clientHeight;
+            }
+        });
+
+        window.onload = init;
+    </script>
+</body>
+</html>

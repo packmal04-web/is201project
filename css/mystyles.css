@@ -1,0 +1,155 @@
+/* ===== Base Styles ===== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f7f9; /* soft beachy background */
+  color: #333;
+  line-height: 1.6;
+}
+
+/* ===== Navbar Styling ===== */
+#mainNav {
+  background-color: #1a535c; /* same as "My Resume" */
+  padding: 12px 30px;
+  border-radius: 12px; /* optional rounded corners */
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+#mainNav .container {
+  display: flex;
+  justify-content: center; /* center links horizontally */
+}
+
+#mainNav .navbar-nav {
+  display: flex;
+  gap: 30px; /* space between links */
+  align-items: center; /* center vertically */
+}
+
+#mainNav .nav-link {
+  color: #1a535c; /* same as background - links invisible */
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+
+#mainNav .nav-link:hover {
+  color: #ff6f61; /* coral accent on hover */
+  text-decoration: none;
+}
+
+/* Remove bullets for navbar */
+#mainNav .navbar-nav li {
+  list-style: none;
+}
+
+/* Remove hamburger menu icon entirely */
+.navbar-toggler {
+  display: none;
+}
+
+/* ===== Page Header Styling ===== */
+.page-heading {
+  text-align: center;
+  margin: 60px 0 40px 0;
+}
+
+.page-heading h1 {
+  font-size: 3rem;
+  color: #1a535c; /* deep ocean color */
+  margin-bottom: 12px;
+}
+
+.page-heading .subheading {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+/* Remove white card background from header */
+header, .page-heading {
+  background: none;
+  padding: 0;
+}
+
+/* ===== Container ===== */
+.container {
+  max-width: 850px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  padding: 40px 50px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  border-top: 6px solid #f7c27b; /* sandy accent */
+}
+
+/* ===== Section Headings ===== */
+section {
+  margin-bottom: 30px;
+}
+
+section h2 {
+  margin-bottom: 16px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #a0c4d8; /* ocean accent */
+  font-size: 1.5rem;
+  font-family: 'Playfair Display', serif;
+  color: #1a535c; /* deep ocean */
+}
+
+/* ===== Resume Items ===== */
+.item {
+  margin-bottom: 20px;
+}
+
+.item h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-family: 'Raleway', sans-serif;
+  color: #ff6f61; /* coral tone */
+  font-weight: 600;
+}
+
+.item span {
+  display: block;
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 2px;
+}
+
+/* ===== Lists ===== */
+ul {
+  margin: 8px 0 0 18px;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 6px;
+}
+
+/* ===== Skills & Interests ===== */
+section ul li strong {
+  color: #1a535c; /* deep ocean accent */
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .container {
+    padding: 25px 30px;
+  }
+
+  section h2 {
+    font-size: 1.3rem;
+  }
+
+  .item h3 {
+    font-size: 1.1rem;
+  }
+
+  #mainNav .navbar-nav {
+    gap: 15px;
+  }
+}
